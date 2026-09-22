@@ -1,0 +1,27 @@
+{
+  "passMark": 0.8,
+  "questionsPerQuiz": 20,
+  "levels": [
+    { "id": 1, "title": "Present regular", "tenses": ["Presente Indicativo"], "pattern": "regular", "verbs": ["hablar", "comer", "vivir", "trabajar", "escribir", "aprender", "necesitar", "beber", "abrir"], "lesson": "01-present-regular.md" },
+    { "id": 2, "title": "Present core irregulars", "tenses": ["Presente Indicativo"], "pattern": "irregular", "verbs": ["ser", "estar", "ir", "tener", "haber", "dar", "ver"], "lesson": "02-present-core-irregulars.md" },
+    { "id": 3, "title": "Present stem changes", "tenses": ["Presente Indicativo"], "pattern": "irregular", "verbs": ["pensar", "querer", "empezar", "poder", "volver", "encontrar", "dormir", "pedir", "seguir", "jugar"], "lesson": "03-present-stem-changes.md" },
+    { "id": 4, "title": "Present yo forms", "tenses": ["Presente Indicativo"], "pattern": "irregular", "verbs": ["hacer", "poner", "salir", "traer", "conocer", "saber", "venir", "decir"], "lesson": "04-present-yo-forms.md" },
+    { "id": 5, "title": "Gerund", "tenses": ["Gerundio"], "pattern": "mixed", "verbs": ["hablar", "comer", "vivir", "leer", "oír", "dormir", "pedir", "decir", "ir", "seguir", "sentir", "venir"], "lesson": "05-gerund.md" },
+    { "id": 6, "title": "Preterite regular", "tenses": ["Pretérito Indicativo"], "pattern": "regular", "verbs": ["hablar", "comer", "vivir", "trabajar", "escribir", "abrir", "llamar", "aprender"], "lesson": "06-preterite-regular.md" },
+    { "id": 7, "title": "Preterite spelling changes", "tenses": ["Pretérito Indicativo"], "pattern": "irregular", "verbs": ["buscar", "llegar", "empezar", "pagar", "sacar", "tocar", "jugar", "leer"], "lesson": "07-preterite-spelling-changes.md" },
+    { "id": 8, "title": "Preterite irregular", "tenses": ["Pretérito Indicativo"], "pattern": "irregular", "verbs": ["ser", "ir", "tener", "estar", "hacer", "poder", "poner", "decir", "venir", "querer", "dar", "traer"], "lesson": "08-preterite-irregular.md" },
+    { "id": 9, "title": "Preterite stem changes", "tenses": ["Pretérito Indicativo"], "pattern": "irregular", "verbs": ["dormir", "morir", "pedir", "seguir", "sentir", "preferir", "repetir", "servir"], "lesson": "09-preterite-stem-changes.md" },
+    { "id": 10, "title": "Imperfect", "tenses": ["Imperfecto Indicativo"], "pattern": "mixed", "verbs": ["hablar", "comer", "vivir", "estar", "tener", "ser", "ir", "ver"], "lesson": "10-imperfect.md" },
+    { "id": 11, "title": "Present perfect", "tenses": ["Participio", "Presente perfecto Indicativo"], "pattern": "mixed", "verbs": ["hablar", "comer", "vivir", "hacer", "decir", "ver", "poner", "escribir", "volver", "abrir", "romper", "morir"], "lesson": "11-present-perfect.md" },
+    { "id": 12, "title": "Future", "tenses": ["Futuro Indicativo"], "pattern": "mixed", "verbs": ["hablar", "comer", "vivir", "tener", "poder", "hacer", "decir", "salir", "saber", "venir", "poner", "querer"], "lesson": "12-future.md" },
+    { "id": 13, "title": "Conditional", "tenses": ["Condicional Indicativo"], "pattern": "mixed", "verbs": ["hablar", "comer", "vivir", "tener", "poder", "hacer", "decir", "salir", "saber", "querer", "haber"], "lesson": "13-conditional.md" },
+    { "id": 14, "title": "Affirmative imperative", "tenses": ["Presente Imperativo Afirmativo"], "pattern": "mixed", "verbs": ["hablar", "comer", "escribir", "tener", "hacer", "poner", "salir", "venir", "decir", "ir", "ser"], "lesson": "14-affirmative-imperative.md" },
+    { "id": 15, "title": "Present subjunctive regular", "tenses": ["Presente Subjuntivo"], "pattern": "regular", "verbs": ["hablar", "comer", "vivir", "trabajar", "escribir", "aprender", "llamar"], "lesson": "15-present-subjunctive-regular.md" },
+    { "id": 16, "title": "Present subjunctive irregular", "tenses": ["Presente Subjuntivo"], "pattern": "irregular", "verbs": ["ser", "estar", "ir", "haber", "saber", "dar", "tener", "hacer", "pensar", "poder", "pedir", "buscar"], "lesson": "16-present-subjunctive-irregular.md" },
+    { "id": 17, "title": "Negative imperative", "tenses": ["Presente Imperativo Negativo"], "pattern": "mixed", "verbs": ["hablar", "comer", "escribir", "tener", "hacer", "ir", "ser", "decir"], "lesson": "17-negative-imperative.md" },
+    { "id": 18, "title": "Pluperfect", "tenses": ["Pluscuamperfecto Indicativo"], "pattern": "mixed", "verbs": ["hablar", "comer", "vivir", "hacer", "decir", "ver", "volver", "escribir"], "lesson": "18-pluperfect.md" },
+    { "id": 19, "title": "Compound future", "tenses": ["Futuro perfecto Indicativo", "Condicional perfecto Indicativo"], "pattern": "mixed", "verbs": ["hablar", "terminar", "llegar", "hacer", "decir", "ver", "volver", "poner"], "lesson": "19-compound-future.md" },
+    { "id": 20, "title": "Imperfect subjunctive", "tenses": ["Imperfecto Subjuntivo"], "pattern": "mixed", "verbs": ["hablar", "comer", "vivir", "ser", "tener", "hacer", "poder", "decir", "estar", "querer"], "lesson": "20-imperfect-subjunctive.md" },
+    { "id": 21, "title": "Compound subjunctive", "tenses": ["Presente perfecto Subjuntivo", "Pluscuamperfecto Subjuntivo"], "pattern": "mixed", "verbs": ["hablar", "llegar", "terminar", "hacer", "decir", "ver", "volver", "escribir"], "lesson": "21-compound-subjunctive.md" }
+  ]
+}

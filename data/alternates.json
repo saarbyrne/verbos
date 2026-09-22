@@ -1,0 +1,119 @@
+{
+  "criar|Presente Indicativo; 2a persona; plural": [
+    "criáis"
+  ],
+  "criar|Presente Subjuntivo; 2a persona; plural": [
+    "criéis"
+  ],
+  "criar|Presente Imperativo Negativo; 2a persona; plural": [
+    "no criéis"
+  ],
+  "evacuar|Presente Indicativo; 1a persona; singular": [
+    "evacúo"
+  ],
+  "evacuar|Presente Indicativo; 2a persona; singular": [
+    "evacúas"
+  ],
+  "evacuar|Presente Indicativo; 3a persona; singular": [
+    "evacúa"
+  ],
+  "evacuar|Presente Indicativo; 3a persona; plural": [
+    "evacúan"
+  ],
+  "evacuar|Presente Subjuntivo; 1a persona; singular": [
+    "evacúe"
+  ],
+  "evacuar|Presente Subjuntivo; 2a persona; singular": [
+    "evacúes"
+  ],
+  "evacuar|Presente Subjuntivo; 3a persona; singular": [
+    "evacúe"
+  ],
+  "evacuar|Presente Subjuntivo; 3a persona; plural": [
+    "evacúen"
+  ],
+  "evacuar|Presente Imperativo Afirmativo; 2a persona; singular": [
+    "evacúa"
+  ],
+  "evacuar|Presente Imperativo Afirmativo; 3a persona; singular": [
+    "evacúe"
+  ],
+  "evacuar|Presente Imperativo Afirmativo; 3a persona; plural": [
+    "evacúen"
+  ],
+  "evacuar|Presente Imperativo Negativo; 2a persona; singular": [
+    "no evacúes"
+  ],
+  "evacuar|Presente Imperativo Negativo; 3a persona; singular": [
+    "no evacúe"
+  ],
+  "evacuar|Presente Imperativo Negativo; 3a persona; plural": [
+    "no evacúen"
+  ],
+  "freír|Presente Subjuntivo; 2a persona; plural": [
+    "friáis"
+  ],
+  "freír|Presente Imperativo Negativo; 2a persona; plural": [
+    "no friáis"
+  ],
+  "guiar|Presente Indicativo; 2a persona; plural": [
+    "guiáis"
+  ],
+  "guiar|Presente Subjuntivo; 2a persona; plural": [
+    "guiéis"
+  ],
+  "guiar|Presente Imperativo Negativo; 2a persona; plural": [
+    "no guiéis"
+  ],
+  "huir|Presente Indicativo; 2a persona; plural": [
+    "huís"
+  ],
+  "predecir|Futuro Indicativo; 1a persona; singular": [
+    "predeciré"
+  ],
+  "predecir|Futuro Indicativo; 2a persona; singular": [
+    "predecirás"
+  ],
+  "predecir|Futuro Indicativo; 3a persona; singular": [
+    "predecirá"
+  ],
+  "predecir|Futuro Indicativo; 1a persona; plural": [
+    "predeciremos"
+  ],
+  "predecir|Futuro Indicativo; 2a persona; plural": [
+    "predeciréis"
+  ],
+  "predecir|Futuro Indicativo; 3a persona; plural": [
+    "predecirán"
+  ],
+  "predecir|Condicional Indicativo; 1a persona; singular": [
+    "predeciría"
+  ],
+  "predecir|Condicional Indicativo; 2a persona; singular": [
+    "predecirías"
+  ],
+  "predecir|Condicional Indicativo; 3a persona; singular": [
+    "predeciría"
+  ],
+  "predecir|Condicional Indicativo; 1a persona; plural": [
+    "predeciríamos"
+  ],
+  "predecir|Condicional Indicativo; 2a persona; plural": [
+    "predeciríais"
+  ],
+  "predecir|Condicional Indicativo; 3a persona; plural": [
+    "predecirían"
+  ],
+  "reír|Pretérito Indicativo; 3a persona; singular": [
+    "rió"
+  ],
+  "reír|Presente Subjuntivo; 2a persona; plural": [
+    "riáis"
+  ],
+  "reír|Presente Imperativo Negativo; 2a persona; plural": [
+    "no riáis"
+  ],
+  "haber|Presente Indicativo; 3a persona; singular": [
+    "hay"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "verbos",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local Spanish verb conjugation trainer",
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "start:lan": "node scripts/serve.mjs --host",
+    "test": "node --test \"tests/*.test.js\"",
+    "precache": "node scripts/precache.mjs",
+    "typecheck": "tsc -p jsconfig.json"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
