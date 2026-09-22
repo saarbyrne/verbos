@@ -1,5 +1,7 @@
 # Verbos
 
+Live at https://saarbyrne.github.io/verbos/. On an iPhone, open it in Safari and choose Share → Add to Home Screen, and it then works offline.
+
 Verbos is a local Spanish verb trainer modelled on Ella Verbs. It has 21 levels with a lesson and a typed-answer quiz each, a daily review, a custom practice quiz and a verb library with 633 verbs. It runs in the browser and has no dependencies, account or server.
 
 The full spec is in Obsidian: `Leisure/Español/Verb trainer spec.md`.
@@ -14,7 +16,9 @@ npm start
 
 Then open http://localhost:5173.
 
-To open it on a phone on the same Wi-Fi, run `npm run start:lan` and use the address it prints. The app works over that address while the Mac is running the server. Offline use on the phone needs HTTPS (for example GitHub Pages), because browsers only allow service workers on HTTPS or localhost.
+To open it on a phone on the same Wi-Fi, run `npm run start:lan` and use the address it prints. The app works over that address while the Mac is running the server. Offline use on the phone needs HTTPS, so use the GitHub Pages address for that.
+
+GitHub Pages deploys from the `main` branch root. The empty `.nojekyll` file turns off Jekyll, which would otherwise convert the lesson Markdown files and break the `{{table …}}` lines.
 
 ## Tests
 
