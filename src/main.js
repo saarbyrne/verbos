@@ -78,6 +78,8 @@ async function start() {
   } catch (err) {
     replace(main, h('p', { class: 'error' }, String(/** @type {Error} */ (err).message ?? err)));
   }
+  // Ask the browser not to clear saved progress when space runs low.
+  navigator.storage?.persist?.().catch(() => {});
   if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }
