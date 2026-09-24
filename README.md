@@ -1,6 +1,6 @@
 # Verbos
 
-Live at https://saarbyrne.github.io/verbos/. On an iPhone, open it in Safari and choose Share → Add to Home Screen, and it then works offline.
+Live at https://verbos.hecho.fyi. On an iPhone, open it in Safari and choose Share → Add to Home Screen, and it then works offline.
 
 Verbos is a local Spanish verb trainer modelled on Ella Verbs. It has 21 levels with a lesson and a typed-answer quiz each, a daily review, a custom practice quiz and a verb library with 633 verbs. It runs in the browser and has no dependencies, account or server.
 
