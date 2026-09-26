@@ -1,45 +1,45 @@
 :root {
-  --bg: #f6f5f2;
+  --bg: #ffffff;
   --surface: #ffffff;
-  --surface-2: #efede8;
-  --text: #1c1b19;
-  --muted: #6b6962;
-  --line: #e2dfd8;
-  --accent: #b4441f;
-  --accent-text: #ffffff;
-  --accent-weak: #f7e7e0;
+  --surface-2: #f2f2ef;
+  --text: #141414;
+  --muted: #6e6e6e;
+  --line: #e3e3de;
+  --accent: #ff4b2b;
+  --accent-text: #141414;
+  --accent-weak: #ffe3dd;
   --ok: #1f7a4d;
   --ok-weak: #e2f1e8;
   --bad: #b42318;
   --bad-weak: #fbe8e6;
   --warn: #8a5a00;
   --warn-weak: #fbf0d4;
-  --irr: #b4441f;
-  --end: #2457a6;
-  --radius: 12px;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 1px 1px rgb(0 0 0 / 0.03);
+  --irr: #c8321a;
+  --end: #2f4bff;
+  --radius: 0;
+  --shadow: none;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #161513;
-    --surface: #1f1e1b;
-    --surface-2: #2a2825;
-    --text: #eceae4;
-    --muted: #a19e95;
-    --line: #34322d;
-    --accent: #e8744d;
-    --accent-text: #1a0c06;
-    --accent-weak: #3b2219;
+    --bg: #141414;
+    --surface: #1c1c1c;
+    --surface-2: #262626;
+    --text: #ffffff;
+    --muted: #a3a3a3;
+    --line: #333333;
+    --accent: #ff4b2b;
+    --accent-text: #141414;
+    --accent-weak: #3a1a14;
     --ok: #5ccf96;
     --ok-weak: #17301f;
     --bad: #f97a70;
     --bad-weak: #3a1816;
     --warn: #f2c35b;
     --warn-weak: #332a12;
-    --irr: #f0885f;
-    --end: #86b2f5;
+    --irr: #ff7a5c;
+    --end: #8a9bff;
     --shadow: none;
     color-scheme: dark;
   }
@@ -341,3 +341,40 @@ h2 .tn-en { text-transform: none; letter-spacing: 0; font-weight: 400; }
 @media (max-width: 380px) {
   .nav a { padding: 6px 4px; font-size: 0.84rem; }
 }
+
+/* ---------- hecho Type led brand ----------
+   Display: Bricolage Grotesque. Text: Instrument Sans. Labels: JetBrains Mono.
+   Flat: no rounded corners, no shadows. One app colour. */
+body { font-family: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+h1, .brand { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 800; }
+h1 { font-size: clamp(2.4rem, 8vw, 3.5rem); line-height: 1; letter-spacing: -0.035em; }
+h2 { font-family: "JetBrains Mono", ui-monospace, monospace; font-weight: 400; font-size: 0.75rem; letter-spacing: 0.12em; }
+.brand { font-size: 1.6rem; letter-spacing: -0.02em; }
+.top { background: var(--bg); backdrop-filter: none; border-bottom: 6px solid var(--accent); }
+.nav a { border-radius: 0; }
+.nav a:hover { background: none; color: var(--text); }
+.nav a.active { background: none; box-shadow: none; color: var(--text); font-weight: 600; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+.card { background: transparent; border: 0; border-top: 2px solid var(--text); border-radius: 0; box-shadow: none; padding: 20px 0 24px; }
+.btn { border-radius: 0; font-weight: 600; }
+.btn.primary:hover { filter: brightness(0.95); }
+.input { border-radius: 0; }
+.segmented { border-radius: 0; }
+.segmented button { border-radius: 0; }
+.segmented button.on { background: var(--accent); color: var(--accent-text); box-shadow: none; }
+.chip, .tag, .x { border-radius: 0; }
+.level-row { border-radius: 0; box-shadow: none; border: 0; border-top: 1px solid var(--line); background: none; padding: 14px 0; }
+.levels { gap: 0; }
+.level-row:hover { border-color: var(--accent); }
+.num { border-radius: 0; font-family: "JetBrains Mono", ui-monospace, monospace; font-weight: 400; }
+.level-row.complete .num { background: var(--accent); color: var(--accent-text); }
+.chip.toggle.on { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.chip.toggle.on .tn-en { color: var(--accent-text); opacity: 0.75; }
+.badge, .status, .meter, .bar { border-radius: 0; }
+.vt-scroll, .verb-list, .search-results .result { border-radius: 0; }
+.stat { border-radius: 0; box-shadow: none; border: 0; border-top: 2px solid var(--text); background: none; padding: 14px 0; }
+.stat-num, .score, .prompt-main { font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 800; letter-spacing: -0.03em; }
+.stat-num { font-size: 2rem; }
+.box-bar { border-radius: 0; }
+.answer { border-radius: 0; }
+.key { border-radius: 10px; border: 2px solid var(--text); border-bottom-width: 5px; font-family: "Bricolage Grotesque", system-ui, sans-serif; font-weight: 800; }
+.close { border-radius: 0; }
