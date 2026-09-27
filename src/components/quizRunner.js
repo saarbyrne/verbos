@@ -4,6 +4,7 @@ import { h, replace } from '../lib/h.js';
 import { check, countsAsRight } from '../engine/check.js';
 import { today } from '../engine/schedule.js';
 import { TENSE_BY_KEY, parseFormKey } from '../engine/tenses.js';
+import { scoreQuiz } from '../engine/quiz.js';
 import { AccentKeys } from './accentKeys.js';
 import { FormText } from './verbTable.js';
 import { TenseName, tenseText } from './tenseName.js';
@@ -16,6 +17,7 @@ import { TenseName, tenseText } from './tenseName.js';
  * @typedef {object} QuizResult
  * @property {number} total
  * @property {number} firstCorrect
+ * @property {number} retryCorrect
  * @property {number} score        0 to 1
  * @property {Question[]} misses
  */
@@ -44,8 +46,8 @@ export function QuizRunner(app, opts) {
   const total = opts.questions.length;
   /** @type {{ q: Question, n: number, attempt: number }[]} */
   const queue = opts.questions.map((q, n) => ({ q, n, attempt: 0 }));
-  /** @type {Map<number, boolean>} */
-  const firstRight = new Map();
+  /** @type {Map<number, 'first'|'retry'|'missed'>} */
+  const outcomes = new Map();
   /** @type {Set<string>} */
   const recorded = new Set();
   let pos = 0;
@@ -79,11 +81,13 @@ export function QuizRunner(app, opts) {
           h('div', { class: 'prompt-main', lang: 'es' }, q.form.infinitive),
           h('div', { class: 'prompt-meta' },
             h('span', { class: 'chip' }, TenseName(tense.key)),
+            cur.attempt ? h('span', { class: 'chip muted' }, 'Second try') : null,
             q.pronoun ? h('span', { class: 'pronoun', lang: 'es' }, q.pronoun) : null))
       : h('div', { class: 'prompt' },
           h('div', { class: 'prompt-main en' }, q.form.english),
           h('div', { class: 'prompt-meta' },
             h('span', { class: 'chip' }, TenseName(tense.key)),
+            cur.attempt ? h('span', { class: 'chip muted' }, 'Second try') : null,
             note ? h('span', { class: 'chip muted' }, note) : null));
 
     function doCheck() {
@@ -97,14 +101,16 @@ export function QuizRunner(app, opts) {
       const result = check(input.value, q.form, q.alternates);
       const right = countsAsRight(result, app.store.settings.accentMode);
       if (cur.attempt === 0) {
-        firstRight.set(cur.n, right);
         if (!recorded.has(q.id)) {
           app.store.recordAnswer(q.id, result, right, today());
           recorded.add(q.id);
         }
       }
-      if (right) done++;
-      else queue.push({ q, n: cur.n, attempt: cur.attempt + 1 });
+      // One retry per question. A right retry earns part of a point.
+      if (right) outcomes.set(cur.n, cur.attempt === 0 ? 'first' : 'retry');
+      else if (cur.attempt === 0) queue.push({ q, n: cur.n, attempt: 1 });
+      else outcomes.set(cur.n, 'missed');
+      if (right || cur.attempt > 0) done++;
 
       root.querySelector('.bar > span')?.setAttribute('style', `width:${(done / total) * 100}%`);
       const counter = root.querySelector('.counter');
@@ -153,13 +159,14 @@ export function QuizRunner(app, opts) {
   }
 
   function renderEnd() {
-    const firstCorrect = [...firstRight.values()].filter(Boolean).length;
-    const missed = new Set([...firstRight.entries()].filter(([, r]) => !r).map(([n]) => n));
+    const { first: firstCorrect, retry: retryCorrect, score } = scoreQuiz(total, outcomes);
+    const missed = new Set([...outcomes.entries()].filter(([, o]) => o !== 'first').map(([n]) => n));
     /** @type {QuizResult} */
     const result = {
       total,
       firstCorrect,
-      score: total ? firstCorrect / total : 0,
+      retryCorrect,
+      score,
       misses: opts.questions.filter((_, n) => missed.has(n)),
     };
     if (!finished) {
@@ -175,7 +182,7 @@ export function QuizRunner(app, opts) {
       h('div', { class: 'bar' }, h('span', { style: 'width:100%' })),
       h('div', { class: 'card result' },
         h('div', { class: 'score' }, `${Math.round(result.score * 100)}%`),
-        h('div', { class: 'sub' }, `${firstCorrect} / ${total}`),
+        h('div', { class: 'sub' }, retryCorrect ? `${firstCorrect} first try · ${retryCorrect} on second try · ${total} questions` : `${firstCorrect} / ${total}`),
         status ? h('div', { class: `status ${result.score >= app.curriculum.passMark ? 'correct' : 'wrong'}` }, status) : null,
         result.misses.length
           ? h('ul', { class: 'misses' }, result.misses.map((q) =>

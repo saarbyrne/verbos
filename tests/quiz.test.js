@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { buildPool, sample, makeQuestion, pronounFor, splitId, itemId } from '../src/engine/quiz.js';
+import { scoreQuiz } from '../src/engine/quiz.js';
 import { engine } from './helpers.js';
 
 test('pool respects vosotros and persons', () => {
@@ -51,4 +52,13 @@ test('translate prompts accept verbs with the same English', () => {
   assert.ok(q.alternates.includes('dispuse'));
   const c = makeQuestion(engine, { infinitive: 'arreglar', formKey: key }, 'conjugate');
   assert.deepEqual(c.alternates, []);
+});
+
+test('scoreQuiz gives half a point for a right retry', () => {
+  const o = new Map([[0, 'first'], [1, 'retry'], [2, 'missed'], [3, 'first']]);
+  const r = scoreQuiz(4, o);
+  assert.equal(r.first, 2);
+  assert.equal(r.retry, 1);
+  assert.equal(r.score, 2.5 / 4);
+  assert.equal(scoreQuiz(0, new Map()).score, 0);
 });

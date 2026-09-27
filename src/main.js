@@ -10,6 +10,7 @@ import { Practice, PracticeQuiz } from './views/practice.js';
 import { Verbs, Verb } from './views/verbs.js';
 import { Progress } from './views/progress.js';
 import { Settings } from './views/settings.js';
+import { AppsButton } from './lib/apps.js';
 
 /** @typedef {import('./app.js').App} App */
 
@@ -21,8 +22,24 @@ const NAV = [
   { href: '#/practice', label: 'Practice', match: ['practice'] },
   { href: '#/verbs', label: 'Verbs', match: ['verbs'] },
   { href: '#/progress', label: 'Progress', match: ['progress'] },
-  { href: '#/settings', label: 'Settings', match: ['settings'], icon: true },
 ];
+
+const CHEVRON = '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>';
+
+/**
+ * Where the back link goes on screens below the main level. Null on main screens.
+ * @param {string[]} parts
+ * @returns {{ href: string, label: string } | null}
+ */
+export function backFor(parts) {
+  const [a, b, c] = parts;
+  if (a === 'level' && b) return c === 'quiz' ? { href: `#/level/${b}`, label: `Level ${b}` } : { href: '#/', label: 'Levels' };
+  if ((a === 'review' || a === 'practice') && b === 'quiz') return { href: `#/${a}`, label: a === 'review' ? 'Review' : 'Practice' };
+  if (a === 'verbs' && b) return { href: '#/verbs', label: 'Verbs' };
+  return null;
+}
+
+const settingsLink = h('a', { class: 'icon-btn', href: '#/settings', 'aria-label': 'Settings', title: 'Settings', innerHTML: SLIDERS });
 
 /** @param {App} app @param {string[]} parts */
 function route(app, parts) {
@@ -55,10 +72,16 @@ function render(app, nav, main) {
   const inQuiz = parts.includes('quiz');
   document.body.classList.toggle('quiz-mode', inQuiz);
   const due = dueCount(reviewItems(app), today());
-  replace(nav, NAV.map((n) =>
-    h('a', { href: n.href, class: n.match.includes(parts[0]) ? 'active' : '', 'aria-current': n.match.includes(parts[0]) ? 'page' : null, 'aria-label': n.icon ? n.label : null, title: n.icon ? n.label : null },
-      n.icon ? h('span', { class: 'icon', innerHTML: SLIDERS }) : n.label,
-      n.label === 'Review' && due ? h('span', { class: 'badge' }, String(due)) : null)));
+  const back = backFor(parts);
+  if (back) {
+    replace(nav, h('a', { class: 'back', href: back.href }, h('span', { class: 'icon', innerHTML: CHEVRON }), back.label));
+  } else {
+    replace(nav, NAV.map((n) =>
+      h('a', { href: n.href, class: n.match.includes(parts[0]) ? 'active' : '', 'aria-current': n.match.includes(parts[0]) ? 'page' : null },
+        n.label,
+        n.label === 'Review' && due ? h('span', { class: 'badge' }, String(due)) : null)));
+  }
+  settingsLink.toggleAttribute('aria-current', parts[0] === 'settings');
   replace(main, route(app, parts));
   window.scrollTo(0, 0);
 }
@@ -66,6 +89,7 @@ function render(app, nav, main) {
 async function start() {
   const nav = /** @type {HTMLElement} */ (document.getElementById('nav'));
   const main = /** @type {HTMLElement} */ (document.getElementById('main'));
+  document.getElementById('top-actions')?.append(settingsLink, AppsButton('verbos', { label: 'hecho apps', support: 'Support', privacy: 'Privacy' }));
   try {
     const [{ engine, curriculum }, top] = await Promise.all([
       loadAll(),

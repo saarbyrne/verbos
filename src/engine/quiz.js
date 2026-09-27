@@ -113,3 +113,21 @@ export function makeQuestion(engine, item, type, rng = Math.random) {
     pronoun: pronounFor(item.formKey, rng),
   };
 }
+
+/** A question right on its second try earns this much of a point. */
+export const RETRY_CREDIT = 0.5;
+
+/**
+ * Score a quiz. Each question is right first time, right on the retry, or missed.
+ * @param {number} total
+ * @param {Map<number, 'first'|'retry'|'missed'>} outcomes
+ */
+export function scoreQuiz(total, outcomes) {
+  let first = 0;
+  let retry = 0;
+  for (const o of outcomes.values()) {
+    if (o === 'first') first++;
+    else if (o === 'retry') retry++;
+  }
+  return { first, retry, score: total ? (first + retry * RETRY_CREDIT) / total : 0 };
+}
