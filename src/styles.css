@@ -438,3 +438,11 @@ body.quiz-mode .quiz-head .close, body.quiz-mode .quiz-head .quiz-title { displa
 body.quiz-mode .quiz-head .counter { font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 0.8rem; }
 .sticky-top { top: 107px; }
 @media (min-width: 760px) { .sticky-top { top: 74px; } }
+
+/* Level groups */
+.level-group {
+  display: flex; align-items: baseline; gap: 10px; margin: 28px 0 0; padding-bottom: 10px; border-bottom: 2px solid var(--text);
+  font: 800 1.5rem/1 "Bricolage Grotesque", system-ui, sans-serif; letter-spacing: -0.02em; text-transform: none; color: var(--text);
+}
+.level-group:first-of-type { margin-top: 8px; }
+.level-group .range { font: 400 0.75rem/1 "JetBrains Mono", ui-monospace, monospace; letter-spacing: 0.08em; color: var(--muted); }

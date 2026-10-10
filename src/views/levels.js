@@ -4,6 +4,7 @@ import { TenseName } from '../components/tenseName.js';
 import { dueCount } from '../engine/schedule.js';
 import { reviewItems } from './review.js';
 import { today } from '../engine/schedule.js';
+import { GROUPS, groupFor } from '../engine/groups.js';
 
 /** @typedef {import('../app.js').App} App */
 
@@ -23,7 +24,9 @@ export function Levels(app) {
           h('span', null, 'Review'),
           h('span', { class: 'badge' }, String(due)))
       : null,
-    h('ol', { class: 'levels' }, app.curriculum.levels.map((l) => {
+    GROUPS.map((g) => [
+      h('h2', { class: 'level-group' }, g.label, h('span', { class: 'range' }, `${g.from}–${g.to}`)),
+      h('ol', { class: 'levels', start: g.from }, app.curriculum.levels.filter((l) => groupFor(l.id) === g).map((l) => {
       const s = levels[l.id];
       return h('li', null,
         h('a', { href: `#/level/${l.id}`, class: `level-row ${s?.completed ? 'complete' : ''}` },
@@ -32,6 +35,7 @@ export function Levels(app) {
             h('span', { class: 'level-title' }, l.title),
             h('span', { class: 'level-tenses' }, l.tenses.flatMap((t, i) => (i ? [' · ', TenseName(t)] : [TenseName(t)])))),
           h('span', { class: 'level-score' }, s ? `${Math.round(s.best * 100)}%` : '')));
-    })),
+      })),
+    ]),
   );
 }

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { check, seVariant, normalize, countsAsRight } from '../src/engine/check.js';
+import { check, seVariant, normalize, countsAsRight, stripDiacritics } from '../src/engine/check.js';
 import { engine } from './helpers.js';
 
 const f = (spanish, formKey) => ({ spanish, formKey });
@@ -71,4 +71,66 @@ test('alternates from data', () => {
 
 test('normalize', () => {
   assert.equal(normalize('¡No  HABLES!'), 'no hables');
+});
+
+/**
+ * Since 2010 the RAE writes words with one vowel group (a diphthong or
+ * triphthong) as one syllable, without an accent: guio, crie, frio, hui.
+ * True for a word in the data that still has the older accented spelling.
+ * @param {string} word
+ */
+function accentedOneSyllable(word) {
+  const runs = word.replace(/([gq])u(?=[eiéí])/g, '$1').match(/[aeiouáéíóúü]+/g) ?? [];
+  if (runs.length !== 1 || runs[0].length < 2 || !/[áéíóú]/.test(runs[0])) return false;
+  // Two strong vowels, or an accented i or u next to a strong vowel, make two syllables (creó, oí).
+  return !/[aeoáéó]{2}/.test(runs[0]) && !(/[íú]/.test(runs[0]) && /[aeoáéó]/.test(runs[0]));
+}
+
+test('one-syllable forms accept the 2010 spelling without the accent', async () => {
+  const { APP_TENSES, formKeysFor } = await import('../src/engine/tenses.js');
+  assert.equal(accentedOneSyllable('guió'), true);
+  assert.equal(accentedOneSyllable('huí'), true);
+  for (const w of ['creó', 'oí', 'reí', 'dé', 'fui', 'guiais', 'averigüé']) assert.equal(accentedOneSyllable(w), false, w);
+  const missing = [];
+  for (const inf of engine.infinitives) {
+    for (const k of APP_TENSES.flatMap((t) => formKeysFor(t.key))) {
+      const form = engine.conjugate(inf, k);
+      const words = form.spanish.split(' ');
+      if (!words.some(accentedOneSyllable)) continue;
+      const modern = words.map((w) => (accentedOneSyllable(w) ? stripDiacritics(w) : w)).join(' ');
+      if (check(modern, form, engine.alternatesFor(inf, k)) !== 'correct') missing.push(`${inf}|${k}: ${modern}`);
+    }
+  }
+  assert.deepEqual(missing, []);
+});
+
+test('criarse accepts the older accented spellings, like criar', () => {
+  const k = (t) => `${t}; 2a persona; plural`;
+  for (const [t, answer] of [['Presente Indicativo', 'os criáis'], ['Presente Subjuntivo', 'os criéis'], ['Presente Imperativo Negativo', 'no os criéis']]) {
+    assert.equal(check(answer, engine.conjugate('criarse', k(t)), engine.alternatesFor('criarse', k(t))), 'correct', answer);
+  }
+});
+
+test('every alternates.json entry names a real form and adds a new spelling', async () => {
+  const { alternates, template } = await import('./helpers.js');
+  for (const [id, list] of Object.entries(alternates)) {
+    const i = id.indexOf('|');
+    const inf = id.slice(0, i);
+    const key = id.slice(i + 1);
+    assert.ok(engine.has(inf), `${id}: unknown verb`);
+    assert.ok(key in template, `${id}: unknown form`);
+    const main = normalize(engine.conjugate(inf, key).spanish);
+    for (const a of list) assert.notEqual(normalize(a), main, `${id}: ${a} is the main form`);
+  }
+});
+
+test('ir and irse accept vamos and vámonos as the nosotros command', () => {
+  // The RAE notes that vamos is more common than vayamos as a command.
+  const k = 'Presente Imperativo Afirmativo; 1a persona; plural';
+  assert.equal(check('vamos', engine.conjugate('ir', k), engine.alternatesFor('ir', k)), 'correct');
+  assert.equal(check('vayamos', engine.conjugate('ir', k), engine.alternatesFor('ir', k)), 'correct');
+  assert.equal(check('¡Vámonos!', engine.conjugate('irse', k), engine.alternatesFor('irse', k)), 'correct');
+  // Not in the negative: "no vamos" is a statement, not a command.
+  const n = 'Presente Imperativo Negativo; 1a persona; plural';
+  assert.equal(check('no vamos', engine.conjugate('ir', n), engine.alternatesFor('ir', n)), 'wrong');
 });

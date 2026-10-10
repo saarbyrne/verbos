@@ -23,7 +23,7 @@ GitHub Pages deploys from the `main` branch root. The empty `.nojekyll` file tur
 ## Tests
 
 ```sh
-npm test            # engine, answer checking, schedule, storage, curriculum, precache list
+npm test            # engine, answer checking, schedule, storage, review, curriculum, precache list, service worker
 npm run typecheck   # optional, needs TypeScript installed (npm i -g typescript)
 ```
 
