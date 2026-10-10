@@ -8,6 +8,27 @@
   "criar|Presente Imperativo Negativo; 2a persona; plural": [
     "no criéis"
   ],
+  "criar|Pretérito Indicativo; 1a persona; singular": [
+    "crie"
+  ],
+  "criar|Pretérito Indicativo; 3a persona; singular": [
+    "crio"
+  ],
+  "criarse|Presente Indicativo; 2a persona; plural": [
+    "os criáis"
+  ],
+  "criarse|Pretérito Indicativo; 1a persona; singular": [
+    "me crie"
+  ],
+  "criarse|Pretérito Indicativo; 3a persona; singular": [
+    "se crio"
+  ],
+  "criarse|Presente Subjuntivo; 2a persona; plural": [
+    "os criéis"
+  ],
+  "criarse|Presente Imperativo Negativo; 2a persona; plural": [
+    "no os criéis"
+  ],
   "evacuar|Presente Indicativo; 1a persona; singular": [
     "evacúo"
   ],
@@ -56,6 +77,9 @@
   "freír|Presente Imperativo Negativo; 2a persona; plural": [
     "no friáis"
   ],
+  "freír|Pretérito Indicativo; 3a persona; singular": [
+    "frio"
+  ],
   "guiar|Presente Indicativo; 2a persona; plural": [
     "guiáis"
   ],
@@ -65,8 +89,17 @@
   "guiar|Presente Imperativo Negativo; 2a persona; plural": [
     "no guiéis"
   ],
+  "guiar|Pretérito Indicativo; 1a persona; singular": [
+    "guie"
+  ],
+  "guiar|Pretérito Indicativo; 3a persona; singular": [
+    "guio"
+  ],
   "huir|Presente Indicativo; 2a persona; plural": [
     "huís"
+  ],
+  "huir|Pretérito Indicativo; 1a persona; singular": [
+    "hui"
   ],
   "predecir|Futuro Indicativo; 1a persona; singular": [
     "predeciré"
@@ -115,5 +148,11 @@
   ],
   "haber|Presente Indicativo; 3a persona; singular": [
     "hay"
+  ],
+  "ir|Presente Imperativo Afirmativo; 1a persona; plural": [
+    "vamos"
+  ],
+  "irse|Presente Imperativo Afirmativo; 1a persona; plural": [
+    "vámonos"
   ]
 }

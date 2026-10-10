@@ -48,3 +48,24 @@ test('pickReview: due first, then lowest accuracy', () => {
   assert.equal(dueCount(items, '2026-09-22'), 2);
   assert.deepEqual(pickReview(items, { date: '2026-09-22', size: 5, include: (s) => s.id !== 'b' }), ['c', 'd', 'a']);
 });
+
+test('dates stay right across daylight-saving changes and near midnight, in any time zone', async () => {
+  const { execFileSync } = await import('node:child_process');
+  const url = new URL('../src/engine/schedule.js', import.meta.url).href;
+  // Walks two years day by day and compares with UTC date maths.
+  const code = `
+    const { addDays, today } = await import(${JSON.stringify(url)});
+    const day = (i) => new Date(Date.UTC(2026, 0, 1) + i * 864e5).toISOString().slice(0, 10);
+    const bad = [];
+    for (let i = 0; i < 730; i++) {
+      for (const n of [1, 3, 7, 14, 30]) if (addDays(day(i), n) !== day(i + n)) bad.push(day(i) + '+' + n);
+    }
+    const last = new Date(2026, 9, 25, 23, 59, 59, 999);
+    bad.push(today(last), today(new Date(last.getTime() + 1)));
+    console.log(JSON.stringify(bad));`;
+  // Madrid and Dublin change at night. The others change at midnight itself.
+  for (const TZ of ['Europe/Madrid', 'Europe/Dublin', 'America/Santiago', 'America/Havana', 'Atlantic/Azores', 'Asia/Beirut']) {
+    const out = execFileSync(process.execPath, ['--input-type=module', '-e', code], { env: { ...process.env, TZ }, encoding: 'utf8', timeout: 30_000 });
+    assert.deepEqual(JSON.parse(out), ['2026-10-25', '2026-10-26'], TZ);
+  }
+});

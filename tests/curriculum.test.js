@@ -45,3 +45,12 @@ test('top verbs list has 200 known verbs', () => {
   assert.equal(new Set(top).size, 200);
   for (const v of top) assert.ok(engine.has(v), v);
 });
+
+test('every level sits in one Fácil, Medio or Difícil group', async () => {
+  const { GROUPS, groupFor } = await import('../src/engine/groups.js');
+  assert.equal(groupFor(1).label, 'Fácil');
+  assert.equal(groupFor(8).label, 'Medio');
+  assert.equal(groupFor(21).label, 'Difícil');
+  assert.equal(GROUPS[0].from, 1);
+  for (let i = 1; i < GROUPS.length; i++) assert.equal(GROUPS[i].from, GROUPS[i - 1].to + 1);
+});

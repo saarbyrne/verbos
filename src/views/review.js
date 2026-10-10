@@ -2,20 +2,25 @@
 import { h } from '../lib/h.js';
 import { pickReview, dueCount, today } from '../engine/schedule.js';
 import { makeQuestion, splitId } from '../engine/quiz.js';
-import { parseFormKey, TENSE_BY_KEY } from '../engine/tenses.js';
+import { APP_TENSES, formKeysFor, parseFormKey } from '../engine/tenses.js';
 import { QuizRunner } from '../components/quizRunner.js';
 
 /** @typedef {import('../app.js').App} App */
 
-/** Review items allowed by the current settings. @param {App} app */
+/** Every form key the app can ask about. */
+const APP_FORM_KEYS = new Set(APP_TENSES.flatMap((t) => formKeysFor(t.key)));
+
+/**
+ * Review items allowed by the current settings. Items for an unknown verb or
+ * form are left out, so they can't stop a review from starting.
+ * @param {App} app
+ */
 export function reviewItems(app) {
   const { vosotros } = app.store.settings;
   return Object.values(app.store.progress.items).filter((s) => {
     const { infinitive, formKey } = splitId(s.id);
-    if (!app.engine.has(infinitive)) return false;
-    const { tense, person } = parseFormKey(formKey);
-    if (!TENSE_BY_KEY[tense]?.inApp) return false;
-    return vosotros || person !== '2p';
+    if (!app.engine.has(infinitive) || !APP_FORM_KEYS.has(formKey)) return false;
+    return vosotros || parseFormKey(formKey).person !== '2p';
   });
 }
 

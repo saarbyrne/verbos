@@ -1,4 +1,5 @@
 // @ts-check
+import { groupFor } from '../engine/groups.js';
 import { h } from '../lib/h.js';
 import { buildPool, sample, makeQuestion } from '../engine/quiz.js';
 import { Lesson } from '../components/lesson.js';
@@ -22,7 +23,7 @@ export function Level(app, id) {
   return h('section', null,
     h('div', { class: 'page-head' },
       h('div', null,
-        h('div', { class: 'eyebrow' }, `Level ${level.id}`),
+        h('div', { class: 'eyebrow' }, `Level ${level.id} · ${groupFor(level.id).label}`),
         h('h1', null, level.title)),
       s ? h('div', { class: 'head-meta' }, `${Math.round(s.best * 100)}%`) : null),
     h('div', { class: 'chips' }, level.tenses.map((t) => h('span', { class: 'chip' }, TenseName(t)))),

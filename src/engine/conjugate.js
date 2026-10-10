@@ -74,6 +74,8 @@ export function createEngine({ verbs, template, additions = {}, alternates = {} 
   /** @type {Record<string, VerbEntry>} */
   const all = { ...verbs, ...additions };
   const infinitives = Object.keys(all).sort((a, b) => a.localeCompare(b, 'es'));
+  /** Own keys only, so "toString" or "constructor" never count as verbs. @param {string} inf */
+  const has = (inf) => Object.prototype.hasOwnProperty.call(all, inf);
 
   /**
    * @param {string} infinitive
@@ -95,9 +97,8 @@ export function createEngine({ verbs, template, additions = {}, alternates = {} 
 
   /** @param {string} infinitive */
   function entryOf(infinitive) {
-    const e = all[infinitive];
-    if (!e) throw new Error(`Unknown verb: ${infinitive}`);
-    return e;
+    if (!has(infinitive)) throw new Error(`Unknown verb: ${infinitive}`);
+    return all[infinitive];
   }
 
   /** @param {string} infinitive */
@@ -205,28 +206,38 @@ export function createEngine({ verbs, template, additions = {}, alternates = {} 
     return entryOf(infinitive).english_disambiguation;
   }
 
+  /** Form keys whose regular pattern uses the participle (the compound tenses). */
+  const participleKeys = new Set(Object.keys(template).filter((k) => Object.values(template[k][1]).some((s) => s.includes('<s_pparticiple>'))));
+
   /**
-   * True if the verb has any irregular form in the app's tenses.
+   * Whether a form can differ from the regular pattern. Only forms listed in
+   * irregular_forms can, and the compound forms of a verb with its own
+   * participle. Checking this first means most forms are never built.
+   * @param {VerbEntry} e
+   * @param {string} key
+   */
+  const mayBeIrregular = (e, key) => key in e.irregular_forms || ('Participio' in e.irregular_forms && participleKeys.has(key));
+
+  /**
+   * True if the verb has any irregular form in the given tenses, or in all the
+   * app's tenses when none are given.
    * @param {string} infinitive
    * @param {string[]} [tenseKeys]
    */
   function hasIrregular(infinitive, tenseKeys) {
-    if (!tenseKeys) {
-      let v = irregularMemo.get(infinitive);
-      if (v === undefined) {
-        v = APP_TENSE_KEYS.some((t) => formKeysFor(t).some((k) => conjugate(infinitive, k).irregular));
-        irregularMemo.set(infinitive, v);
-      }
-      return v;
-    }
-    return tenseKeys.some((t) => formKeysFor(t).some((k) => conjugate(infinitive, k).irregular));
+    const known = tenseKeys ? undefined : irregularMemo.get(infinitive);
+    if (known !== undefined) return known;
+    const e = entryOf(infinitive);
+    const v = (tenseKeys ?? APP_TENSE_KEYS).some((t) => formKeysFor(t).some((k) => mayBeIrregular(e, k) && conjugate(infinitive, k).irregular));
+    if (!tenseKeys) irregularMemo.set(infinitive, v);
+    return v;
   }
   /** @type {Map<string, boolean>} */
   const irregularMemo = new Map();
 
   return {
     infinitives,
-    has: (/** @type {string} */ inf) => inf in all,
+    has,
     entry: entryOf,
     conjugate,
     allForms,

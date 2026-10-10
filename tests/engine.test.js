@@ -115,3 +115,15 @@ test('stressFinalVowel and splitInfinitive', () => {
 test('every tense has an English example', () => {
   for (const t of TENSES) assert.ok(t.ex && t.ex.length > 0, t.key);
 });
+
+test('hasIrregular gives the same answer as building every form', async () => {
+  const { APP_TENSES } = await import('../src/engine/tenses.js');
+  const { createEngine } = await import('../src/engine/conjugate.js');
+  const fresh = createEngine({ verbs, template, additions });
+  const slow = (inf, tenses) => tenses.some((t) => formKeysFor(t).some((k) => engine.conjugate(inf, k).irregular));
+  const all = APP_TENSES.map((t) => t.key);
+  for (const inf of fresh.infinitives) {
+    assert.equal(fresh.hasIrregular(inf), slow(inf, all), inf);
+    for (const t of all) assert.equal(fresh.hasIrregular(inf, [t]), slow(inf, [t]), `${inf} ${t}`);
+  }
+});
