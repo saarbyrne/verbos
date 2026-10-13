@@ -31,7 +31,29 @@ export function render(list) {
 }
 
 /**
- * Every module the entry script loads, found by reading the import lines.
+ * The relative modules a source file imports or re-exports. Handles imports
+ * that span lines and either kind of quote; type-only import('…') in comments
+ * is not at the start of a line, so it is left out.
+ * @param {string} src
+ * @returns {string[]}
+ */
+export function importSpecifiers(src) {
+  return [...src.matchAll(/^[ \t]*(?:import|export)\b(?:[^'";]*?\bfrom)?\s*(['"])([^'"\n]+)\1/gm)]
+    .map((m) => m[2])
+    .filter((spec) => spec.startsWith('.'));
+}
+
+/**
+ * The data files a source file names, in single, double or template quotes.
+ * @param {string} src
+ * @returns {string[]}
+ */
+export function dataFiles(src) {
+  return [...src.matchAll(/(['"`])(data\/[\w./-]+)\1/g)].map((m) => m[2]);
+}
+
+/**
+ * Every module the entry script loads, found by reading the imports.
  * The entry itself is left out: the page's script tag already fetches it.
  * @returns {string[]}
  */
@@ -40,7 +62,7 @@ export function moduleList() {
   const queue = [ENTRY];
   for (const file of queue) {
     const src = readFileSync(join(ROOT, file), 'utf8');
-    for (const [, spec] of src.matchAll(/^import\b[^'"\n]*['"]([^'"]+)['"]/gm)) {
+    for (const spec of importSpecifiers(src)) {
       const dep = posix.join(posix.dirname(file), spec);
       if (!seen.has(dep)) {
         seen.add(dep);
@@ -54,8 +76,7 @@ export function moduleList() {
 
 /** The data files the app fetches by name, found in the source of the modules. */
 export function dataList() {
-  const files = [ENTRY, ...moduleList()].flatMap((f) =>
-    [...readFileSync(join(ROOT, f), 'utf8').matchAll(/'(data\/[\w./-]+)'/g)].map((m) => m[1]));
+  const files = [ENTRY, ...moduleList()].flatMap((f) => dataFiles(readFileSync(join(ROOT, f), 'utf8')));
   return [...new Set(files)].sort();
 }
 
