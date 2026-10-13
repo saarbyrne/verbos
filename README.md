@@ -44,7 +44,7 @@ src/
   views/                  one file per screen
   lib/                    DOM helper and marked (Markdown parser, MIT)
 scripts/serve.mjs         static server
-scripts/precache.mjs      writes the offline file list into sw.js
+scripts/precache.mjs      writes the offline file list into sw.js and the preload tags into index.html
 sw.js                     service worker
 tests/                    node --test
 ```
@@ -54,7 +54,7 @@ tests/                    node --test
 - **New verb.** Add it to `data/additions.json` in the same format as `verbs.json`. A regular verb needs only the English fields. An irregular verb also needs every form that differs from the regular pattern in `irregular_forms`.
 - **New level.** Add it to `data/curriculum.json` and add its lesson to `content/lessons/`. `npm test` checks that the verbs exist and match the level's pattern.
 - **Verb tables in lessons.** Write `{{table hablar comer vivir "Presente Indicativo"}}` on its own line. The tense name must match `template.json`.
-- **New or removed files.** Run `npm run precache`, or the offline cache will miss them. A test fails when the list is out of date.
+- **New or removed files.** Run `npm run precache`, or the offline cache will miss them. A test fails when the list or the preload tags are out of date.
 
 ## Data
 
