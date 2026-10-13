@@ -11,7 +11,7 @@ import { Verbs, Verb } from './views/verbs.js';
 import { Progress } from './views/progress.js';
 import { Settings } from './views/settings.js';
 import { AppsButton } from './lib/apps.js';
-import { watchReopen } from './lib/reopen.js';
+import { watchReopen, watchNewVersion } from './lib/reopen.js';
 
 /** @typedef {import('./app.js').App} App */
 
@@ -94,10 +94,18 @@ async function start() {
   /** @type {App | null} */
   let app = null;
   const redraw = () => { if (app) render(app, nav, main); };
-  const reopen = watchReopen({ today, inQuiz: () => document.body.classList.contains('quiz-mode'), refresh: redraw });
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') reopen.reopened();
+  const visible = () => document.visibilityState === 'visible';
+  const reopen = watchReopen({
+    today,
+    inQuiz: () => document.body.classList.contains('quiz-mode'),
+    refresh: redraw,
+    reload: () => location.reload(),
   });
+  document.addEventListener('visibilitychange', () => {
+    if (visible()) reopen.reopened();
+  });
+  const canCache = 'serviceWorker' in navigator && location.protocol.startsWith('http');
+  if (canCache) watchNewVersion(navigator.serviceWorker, reopen, visible);
   try {
     const [{ engine, curriculum }, top] = await Promise.all([
       loadAll(),
@@ -111,8 +119,13 @@ async function start() {
   }
   // Ask the browser not to clear saved progress when space runs low.
   navigator.storage?.persist?.().catch(() => {});
-  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+  if (canCache) {
+    navigator.serviceWorker.register('sw.js').then((registration) => {
+      // A reopened app doesn't load the page again, so look for a new version now.
+      document.addEventListener('visibilitychange', () => {
+        if (visible()) registration.update().catch(() => {});
+      });
+    }).catch(() => {});
   }
 }
 
