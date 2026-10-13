@@ -7,10 +7,11 @@ import { Levels } from './views/levels.js';
 import { Level, LevelQuiz } from './views/level.js';
 import { Review, ReviewQuiz, reviewItems } from './views/review.js';
 import { Practice, PracticeQuiz } from './views/practice.js';
-import { Verbs, Verb } from './views/verbs.js';
+import { Verbs, Verb, verbFromLink } from './views/verbs.js';
 import { Progress } from './views/progress.js';
 import { Settings } from './views/settings.js';
 import { AppsButton } from './lib/apps.js';
+import { watchReopen, watchNewVersion } from './lib/reopen.js';
 
 /** @typedef {import('./app.js').App} App */
 
@@ -55,7 +56,7 @@ function route(app, parts) {
     case 'practice':
       return b === 'quiz' ? PracticeQuiz(app) : Practice(app);
     case 'verbs':
-      return b ? Verb(app, decodeURIComponent(b)) : Verbs(app);
+      return b ? Verb(app, verbFromLink(b)) : Verbs(app);
     case 'progress':
       return Progress(app);
     case 'settings':
@@ -90,22 +91,41 @@ async function start() {
   const nav = /** @type {HTMLElement} */ (document.getElementById('nav'));
   const main = /** @type {HTMLElement} */ (document.getElementById('main'));
   document.getElementById('top-actions')?.append(settingsLink, AppsButton('verbos', { label: 'hecho apps', support: 'Support', privacy: 'Privacy' }));
+  /** @type {App | null} */
+  let app = null;
+  const redraw = () => { if (app) render(app, nav, main); };
+  const visible = () => document.visibilityState === 'visible';
+  const reopen = watchReopen({
+    today,
+    inQuiz: () => document.body.classList.contains('quiz-mode'),
+    refresh: redraw,
+    reload: () => location.reload(),
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (visible()) reopen.reopened();
+  });
+  const canCache = 'serviceWorker' in navigator && location.protocol.startsWith('http');
+  if (canCache) watchNewVersion(navigator.serviceWorker, reopen);
   try {
     const [{ engine, curriculum }, top] = await Promise.all([
       loadAll(),
       fetch('data/top-verbs.json').then((r) => r.json()),
     ]);
-    /** @type {App} */
-    const app = { engine, curriculum, top: top.verbs, store: createStore() };
-    window.addEventListener('hashchange', () => render(app, nav, main));
-    render(app, nav, main);
+    app = { engine, curriculum, top: top.verbs, store: createStore() };
+    window.addEventListener('hashchange', redraw);
+    redraw();
   } catch (err) {
     replace(main, h('p', { class: 'error' }, String(/** @type {Error} */ (err).message ?? err)));
   }
   // Ask the browser not to clear saved progress when space runs low.
   navigator.storage?.persist?.().catch(() => {});
-  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+  if (canCache) {
+    navigator.serviceWorker.register('sw.js').then((registration) => {
+      // A reopened app doesn't load the page again, so look for a new version now.
+      document.addEventListener('visibilitychange', () => {
+        if (visible()) registration.update().catch(() => {});
+      });
+    }).catch(() => {});
   }
 }
 

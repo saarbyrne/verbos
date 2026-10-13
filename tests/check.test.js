@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { check, seVariant, normalize, countsAsRight, stripDiacritics } from '../src/engine/check.js';
+import { PERSONS, PROMPT_PRONOUNS, formKey } from '../src/engine/tenses.js';
 import { engine } from './helpers.js';
 
 const f = (spanish, formKey) => ({ spanish, formKey });
@@ -18,6 +19,47 @@ test('subject pronoun is optional', () => {
   assert.equal(check('Él habló', f('habló', PRET3)), 'correct');
   assert.equal(check('el habló', f('habló', PRET3)), 'correct');
   assert.equal(check('ustedes hablaron', f('hablaron', 'Pretérito Indicativo; 3a persona; plural')), 'correct');
+});
+
+test('the subject pronoun must match the person asked', () => {
+  const tense = 'Presente Indicativo';
+  const regular = { '1s': 'hablo', '2s': 'hablas', '3s': 'habla', '1p': 'hablamos', '2p': 'habláis', '3p': 'hablan' };
+  for (const person of PERSONS) {
+    const form = f(regular[person], formKey(tense, person));
+    for (const [other, pronouns] of Object.entries(PROMPT_PRONOUNS)) {
+      for (const pronoun of pronouns) {
+        const expected = other === person ? 'correct' : 'wrong';
+        assert.equal(check(`${pronoun} ${regular[person]}`, form), expected, `${pronoun} for ${person}`);
+        assert.equal(check(`  ${pronoun.toUpperCase()}   ${regular[person]}. `, form), expected, `${pronoun} in capitals for ${person}`);
+      }
+    }
+    assert.equal(check(regular[person], form), 'correct', `no pronoun for ${person}`);
+  }
+});
+
+test('subject pronouns also work as short forms and without the accent', () => {
+  const k = (person) => formKey('Presente Indicativo', person);
+  assert.equal(check('tu hablas', f('hablas', k('2s'))), 'correct');
+  assert.equal(check('el habla', f('habla', k('3s'))), 'correct');
+  assert.equal(check('ud habla', f('habla', k('3s'))), 'correct');
+  assert.equal(check('uds hablan', f('hablan', k('3p'))), 'correct');
+  assert.equal(check('ud hablas', f('hablas', k('2s'))), 'wrong');
+  assert.equal(check('tu hablo', f('hablo', k('1s'))), 'wrong');
+});
+
+test('a wrong pronoun is wrong with other tenses, reflexives and non-personal forms', () => {
+  assert.equal(check('tú hablo', f('hablo', PI1)), 'wrong');
+  assert.equal(check('tú me levanto', f('me levanto', PI1)), 'wrong');
+  assert.equal(check('yo me levanto', f('me levanto', PI1)), 'correct');
+  assert.equal(check('ella habló', f('habló', PRET3)), 'correct');
+  assert.equal(check('nosotros habló', f('habló', PRET3)), 'wrong');
+  assert.equal(check('yo hablando', f('hablando', 'Gerundio')), 'wrong');
+  assert.equal(check('hablando', f('hablando', 'Gerundio')), 'correct');
+  const imperative = 'Presente Imperativo Negativo; 2a persona; singular';
+  assert.equal(check('tú no hables', f('no hables', imperative)), 'correct');
+  assert.equal(check('tú hables', f('no hables', imperative)), 'correct');
+  assert.equal(check('usted no hables', f('no hables', imperative)), 'wrong');
+  assert.equal(check('vosotros no hables', f('no hables', imperative)), 'wrong');
 });
 
 test('reflexive pronoun is required', () => {

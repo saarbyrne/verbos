@@ -79,7 +79,10 @@ export const PERSON_LABEL = {
   '3p': 'ellos/ellas/Uds.',
 };
 
-/** Pronouns a quiz prompt can show, per person. Imperatives use their own set. */
+/**
+ * Pronouns a quiz prompt can show, per person. Imperatives use their own set.
+ * check.js also accepts these (and short forms such as ud) as the leading pronoun of an answer.
+ */
 /** @type {Record<Person, string[]>} */
 export const PROMPT_PRONOUNS = {
   '1s': ['yo'],
