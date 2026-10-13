@@ -29,6 +29,27 @@ function initVerbs(app) {
 }
 
 /**
+ * Every form the quiz can ask about. Verbs the app doesn't know are left out, so
+ * a saved list that has one can still start a quiz.
+ * @param {App} app
+ * @param {{ verbs: string[], tenses: Set<string>, persons: Set<Person> }} choice
+ */
+function poolFor(app, choice) {
+  const verbs = choice.verbs.filter((v) => app.engine.has(v));
+  return buildPool({ verbs, tenses: [...choice.tenses], persons: [...choice.persons], vosotros: app.store.settings.vosotros });
+}
+
+/**
+ * The questions of a practice quiz.
+ * @param {App} app
+ * @param {typeof state} choice
+ */
+export function practiceQuestions(app, choice) {
+  const type = choice.promptType ?? app.store.settings.promptType;
+  return sample(poolFor(app, choice), choice.count).map((item) => makeQuestion(app.engine, item, type));
+}
+
+/**
  * @template T
  * @param {Set<T>} set
  * @param {T} v
@@ -52,7 +73,7 @@ export function Practice(app) {
   const summary = h('div', { class: 'head-meta' });
 
   function poolSize() {
-    return buildPool({ verbs: state.verbs, tenses: [...state.tenses], persons: [...state.persons], vosotros: app.store.settings.vosotros }).length;
+    return poolFor(app, state).length;
   }
 
   function renderTenses() {
@@ -163,11 +184,8 @@ export function Practice(app) {
 /** @param {App} app */
 export function PracticeQuiz(app) {
   initVerbs(app);
-  const { settings } = app.store;
-  const pool = buildPool({ verbs: state.verbs, tenses: [...state.tenses], persons: [...state.persons], vosotros: settings.vosotros });
-  if (!pool.length) return Practice(app);
-  const type = state.promptType ?? settings.promptType;
-  const questions = sample(pool, state.count).map((item) => makeQuestion(app.engine, item, type));
+  const questions = practiceQuestions(app, state);
+  if (!questions.length) return Practice(app);
   return QuizRunner(app, {
     title: 'Practice',
     questions,
