@@ -1,5 +1,8 @@
 // @ts-check
-/** Leitner review schedule. Dates are local calendar dates, YYYY-MM-DD. */
+/**
+ * Leitner review schedule. Dates are local calendar dates, YYYY-MM-DD.
+ * The review day starts at 4 am, so an answer at 23:50 is not due again at 00:00.
+ */
 
 /** @typedef {1|2|3|4|5} Box */
 
@@ -19,9 +22,15 @@ export const INTERVALS = { 1: 1, 2: 3, 3: 7, 4: 14, 5: 30 };
 /** @param {number} n */
 const pad = (n) => String(n).padStart(2, '0');
 
-/** @param {Date} [d] */
+const DAY_STARTS_AT = 4;
+
+/** @param {Date} d */
+const calendarDate = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+/** The review day for a moment: from 00:00 to 03:59 it is still the day before. @param {Date} [d] */
 export function today(d = new Date()) {
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const before = d.getHours() < DAY_STARTS_AT ? 1 : 0;
+  return calendarDate(new Date(d.getFullYear(), d.getMonth(), d.getDate() - before));
 }
 
 /**
@@ -30,7 +39,7 @@ export function today(d = new Date()) {
  */
 export function addDays(date, days) {
   const [y, m, d] = date.split('-').map(Number);
-  return today(new Date(y, m - 1, d + days));
+  return calendarDate(new Date(y, m - 1, d + days));
 }
 
 /**
