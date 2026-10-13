@@ -1,14 +1,12 @@
 // @ts-check
 /** Answer checking. */
-import { parseFormKey } from './tenses.js';
+import { parseFormKey, PROMPT_PRONOUNS } from './tenses.js';
 
 /** @typedef {'correct'|'accent'|'wrong'} CheckResult */
+/** @typedef {import('./tenses.js').Person} Person */
 
-const SUBJECT_PRONOUNS = new Set([
-  'yo', 'tú', 'tu', 'él', 'el', 'ella', 'usted', 'ud',
-  'nosotros', 'nosotras', 'vosotros', 'vosotras',
-  'ellos', 'ellas', 'ustedes', 'uds',
-]);
+/** Short forms of usted and ustedes. @type {Partial<Record<Person, string[]>>} */
+const SHORT_PRONOUNS = { '3s': ['ud'], '3p': ['uds'] };
 
 /** Lowercase, collapse spaces, remove ¡ ! ¿ ? and punctuation. @param {string} s */
 export function normalize(s) {
@@ -25,11 +23,18 @@ export function stripDiacritics(s) {
   return s.normalize('NFD').replace(/[̀-ͯ]/g, '').normalize('NFC');
 }
 
-/** Drop a leading subject pronoun if the answer has more than one word. @param {string} s */
-export function stripSubjectPronoun(s) {
+/**
+ * Drop a leading subject pronoun if it belongs to the person and the answer has
+ * more than one word. A pronoun of another person stays, so the answer is wrong.
+ * It may be the short form (ud) or lack its accent (tu, el).
+ * @param {string} s
+ * @param {Person | null} person
+ */
+export function stripSubjectPronoun(s, person) {
   const words = s.split(' ');
-  if (words.length > 1 && SUBJECT_PRONOUNS.has(words[0])) return words.slice(1).join(' ');
-  return s;
+  if (words.length < 2 || !person) return s;
+  const own = [...PROMPT_PRONOUNS[person], ...(SHORT_PRONOUNS[person] ?? [])];
+  return own.some((p) => p === words[0] || stripDiacritics(p) === words[0]) ? words.slice(1).join(' ') : s;
 }
 
 /**
@@ -81,7 +86,7 @@ export function acceptedAnswers(form, alternates = []) {
  * @returns {CheckResult}
  */
 export function check(answer, form, alternates = []) {
-  const a = stripSubjectPronoun(normalize(answer));
+  const a = stripSubjectPronoun(normalize(answer), parseFormKey(form.formKey).person);
   if (!a) return 'wrong';
   const accepted = acceptedAnswers(form, alternates);
   if (accepted.includes(a)) return 'correct';
