@@ -39,6 +39,19 @@ export function Verbs(app) {
     list);
 }
 
+/**
+ * The verb named by the last part of a verb link. A link that can't be decoded
+ * names no verb, so the screen says Verb not found.
+ * @param {string} link
+ */
+export function verbFromLink(link) {
+  try {
+    return decodeURIComponent(link);
+  } catch {
+    return '';
+  }
+}
+
 /** @param {App} app @param {string} infinitive */
 export function Verb(app, infinitive) {
   if (!app.engine.has(infinitive)) return h('p', null, 'Verb not found');

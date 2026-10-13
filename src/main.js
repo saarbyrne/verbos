@@ -7,7 +7,7 @@ import { Levels } from './views/levels.js';
 import { Level, LevelQuiz } from './views/level.js';
 import { Review, ReviewQuiz, reviewItems } from './views/review.js';
 import { Practice, PracticeQuiz } from './views/practice.js';
-import { Verbs, Verb } from './views/verbs.js';
+import { Verbs, Verb, verbFromLink } from './views/verbs.js';
 import { Progress } from './views/progress.js';
 import { Settings } from './views/settings.js';
 import { AppsButton } from './lib/apps.js';
@@ -56,7 +56,7 @@ function route(app, parts) {
     case 'practice':
       return b === 'quiz' ? PracticeQuiz(app) : Practice(app);
     case 'verbs':
-      return b ? Verb(app, decodeURIComponent(b)) : Verbs(app);
+      return b ? Verb(app, verbFromLink(b)) : Verbs(app);
     case 'progress':
       return Progress(app);
     case 'settings':
