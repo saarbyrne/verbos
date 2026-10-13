@@ -60,6 +60,7 @@ const PRECACHE = [
   "src/lib/apps.js",
   "src/lib/h.js",
   "src/lib/marked.esm.js",
+  "src/lib/reopen.js",
   "src/main.js",
   "src/store/store.js",
   "src/styles.css",

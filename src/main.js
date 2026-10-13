@@ -11,6 +11,7 @@ import { Verbs, Verb } from './views/verbs.js';
 import { Progress } from './views/progress.js';
 import { Settings } from './views/settings.js';
 import { AppsButton } from './lib/apps.js';
+import { watchReopen } from './lib/reopen.js';
 
 /** @typedef {import('./app.js').App} App */
 
@@ -90,15 +91,21 @@ async function start() {
   const nav = /** @type {HTMLElement} */ (document.getElementById('nav'));
   const main = /** @type {HTMLElement} */ (document.getElementById('main'));
   document.getElementById('top-actions')?.append(settingsLink, AppsButton('verbos', { label: 'hecho apps', support: 'Support', privacy: 'Privacy' }));
+  /** @type {App | null} */
+  let app = null;
+  const redraw = () => { if (app) render(app, nav, main); };
+  const reopen = watchReopen({ today, inQuiz: () => document.body.classList.contains('quiz-mode'), refresh: redraw });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') reopen.reopened();
+  });
   try {
     const [{ engine, curriculum }, top] = await Promise.all([
       loadAll(),
       fetch('data/top-verbs.json').then((r) => r.json()),
     ]);
-    /** @type {App} */
-    const app = { engine, curriculum, top: top.verbs, store: createStore() };
-    window.addEventListener('hashchange', () => render(app, nav, main));
-    render(app, nav, main);
+    app = { engine, curriculum, top: top.verbs, store: createStore() };
+    window.addEventListener('hashchange', redraw);
+    redraw();
   } catch (err) {
     replace(main, h('p', { class: 'error' }, String(/** @type {Error} */ (err).message ?? err)));
   }
