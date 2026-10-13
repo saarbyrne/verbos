@@ -34,16 +34,14 @@ export function watchReopen({ today, inQuiz, refresh, reload }) {
 
 /**
  * Notices when a new service worker takes over a page that already had one,
- * which is a new version of the app, and loads it if the app is in view.
+ * which is a new version of the app. It is loaded the next time the app is
+ * reopened, so a screen being used is never reloaded under the user.
  * @param {EventTarget & { controller: unknown }} container  navigator.serviceWorker
  * @param {ReturnType<typeof watchReopen>} reopen
- * @param {() => boolean} isVisible
  */
-export function watchNewVersion(container, reopen, isVisible) {
+export function watchNewVersion(container, reopen) {
   const hadWorker = Boolean(container.controller);
   container.addEventListener('controllerchange', () => {
-    if (!hadWorker) return;
-    reopen.markUpdated();
-    if (isVisible()) reopen.reopened();
+    if (hadWorker) reopen.markUpdated();
   });
 }

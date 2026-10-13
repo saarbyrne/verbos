@@ -80,25 +80,10 @@ function fakeWorkerContainer(controlled) {
   return { target, change: () => target.dispatchEvent(new Event('controllerchange')) };
 }
 
-test('a worker taking over a page that had one marks a new version and loads it if the app is visible', () => {
+test('a worker taking over a page that had one marks a new version without reloading right away', () => {
   const { state, reopen } = setup(new Date(2026, 8, 5, 12, 0));
   const sw = fakeWorkerContainer(true);
-  let visible = true;
-  watchNewVersion(sw.target, reopen, () => visible);
-  sw.change();
-  assert.equal(state.reloaded, 1);
-  visible = false;
-  sw.change();
-  assert.equal(state.reloaded, 1);
-  visible = true;
-  reopen.reopened();
-  assert.equal(state.reloaded, 2);
-});
-
-test('a new version found in the background is loaded when the app comes back', () => {
-  const { state, reopen } = setup(new Date(2026, 8, 5, 12, 0));
-  const sw = fakeWorkerContainer(true);
-  watchNewVersion(sw.target, reopen, () => false);
+  watchNewVersion(sw.target, reopen);
   sw.change();
   assert.equal(state.reloaded, 0);
   reopen.reopened();
@@ -108,7 +93,7 @@ test('a new version found in the background is loaded when the app comes back', 
 test('the first worker taking over a page that had none is not a new version', () => {
   const { state, reopen } = setup(new Date(2026, 8, 5, 12, 0));
   const sw = fakeWorkerContainer(false);
-  watchNewVersion(sw.target, reopen, () => true);
+  watchNewVersion(sw.target, reopen);
   sw.change();
   reopen.reopened();
   assert.equal(state.reloaded, 0);
@@ -117,7 +102,11 @@ test('the first worker taking over a page that had none is not a new version', (
 test('a new version found during a quiz is not loaded until the quiz is over', () => {
   const { state, reopen } = setup(new Date(2026, 8, 5, 12, 0), { quiz: true });
   const sw = fakeWorkerContainer(true);
-  watchNewVersion(sw.target, reopen, () => true);
+  watchNewVersion(sw.target, reopen);
   sw.change();
+  reopen.reopened();
   assert.equal(state.reloaded, 0);
+  state.quiz = false;
+  reopen.reopened();
+  assert.equal(state.reloaded, 1);
 });

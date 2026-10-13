@@ -105,7 +105,7 @@ async function start() {
     if (visible()) reopen.reopened();
   });
   const canCache = 'serviceWorker' in navigator && location.protocol.startsWith('http');
-  if (canCache) watchNewVersion(navigator.serviceWorker, reopen, visible);
+  if (canCache) watchNewVersion(navigator.serviceWorker, reopen);
   try {
     const [{ engine, curriculum }, top] = await Promise.all([
       loadAll(),
