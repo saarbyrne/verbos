@@ -2,7 +2,7 @@
 
 Live at https://verbos.hecho.fyi. On an iPhone, open it in Safari and choose Share → Add to Home Screen, and it then works offline.
 
-Verbos is a local Spanish verb trainer modelled on Ella Verbs. It has 21 levels with a lesson and a typed-answer quiz each, a daily review, a custom practice quiz and a verb library with 633 verbs. It runs in the browser and has no dependencies, account or server.
+Verbos is a local Spanish verb trainer modelled on Ella Verbs. It has 21 levels with a lesson and a typed-answer quiz each, a daily review (the review day starts at 4 am, so a late-night answer is not due again at midnight), a custom practice quiz and a verb library with 633 verbs. It runs in the browser and has no dependencies, account or server.
 
 The full spec is in Obsidian: `Leisure/Español/Verb trainer spec.md`.
 
@@ -41,8 +41,10 @@ src/
   engine/                 conjugation, answer checking, review schedule, letter diff, quiz pools
   store/                  localStorage with schema version, export and import
   components/             VerbTable, QuizRunner, AccentKeys, Lesson
+  fonts/                  the three typefaces as woff2 files, served from the app itself
   views/                  one file per screen
   lib/                    DOM helper and marked (Markdown parser, MIT)
+licenses/                 licence texts for the fonts
 scripts/serve.mjs         static server
 scripts/precache.mjs      writes the offline file list into sw.js and the preload tags into index.html
 sw.js                     service worker
@@ -64,3 +66,4 @@ The forms come from fjarri/spanish-verbs, which is a cleaned version of Fred Jeh
 
 - Verb data: Fred Jehle's Conjugated Spanish Verb Database (CC BY-NC-SA 3.0), compiled by Brian Ghidinelli and cleaned by fjarri. Verbos is for personal, non-commercial use for this reason.
 - Markdown: marked (MIT).
+- Fonts: Bricolage Grotesque, Instrument Sans and JetBrains Mono, all under the SIL Open Font License 1.1. The licence texts are in `licenses/`.
